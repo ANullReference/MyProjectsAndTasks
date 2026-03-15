@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/content/" />
+  <Project Path="Core/Core.csproj" />
+  <Project Path="DB.ProjectsAndTasks/DB.ProjectsAndTasks.sqlproj">
+    <Build />
+    <Deploy />
+  </Project>
+  <Project Path="Infrastructure/Infrastructure.csproj" />
+  <Project Path="MyProjectsAndTasks/MyProjectsAndTasks.csproj" />
+</Solution>
