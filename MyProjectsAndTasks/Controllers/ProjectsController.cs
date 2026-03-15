@@ -18,39 +18,39 @@ public class ProjectsController(IServiceManager _serviceManager) : BaseControlle
     [EndpointDescription("Get all projects")]
     [EndpointSummary("Get all projects")]
     
-    public async Task<IActionResult> GetProjects()
+    public async Task<IActionResult> GetProjects(CancellationToken cancellationToken)
     {
-        return await Run(() => _serviceManager.GetProjects());
+        return await Run(() => _serviceManager.GetProjects(cancellationToken));
     }
 
     [HttpGet("{projectId}")]
-    [ProducesResponseType(typeof(ProjectModel[]), 200)]
+    [ProducesResponseType(typeof(ResponseObject<ProjectModel[]>), 200)]
     [ProducesResponseType(404)]
     [ProducesResponseType(500)]
     [EndpointDescription("Get a specific project by its id")]
-    public async Task<IActionResult> GetProjectById(int projectId)
+    public async Task<IActionResult> GetProjectById(int projectId, CancellationToken cancellationToken)
     {
-        return await Run(() => _serviceManager.GetProjectById(projectId));
+        return await Run(() => _serviceManager.GetProjectById(projectId, cancellationToken));
     }
 
     [HttpPut("add")]
-    [ProducesResponseType(typeof(ProjectModel), 200)]
+    [ProducesResponseType(typeof(ResponseObject<ProjectModel>), 200)]
     [ProducesResponseType(404)]
     [ProducesResponseType(500)]
     [EndpointDescription("Get a specific project by its id")]
-    public async Task<IActionResult> AddProject(ProjectModel projectModel)
+    public async Task<IActionResult> AddProject(ProjectModel projectModel, CancellationToken cancellationToken)
     {
-        return await Run(() => _serviceManager.AddProject(projectModel));
+        return await Run(() => _serviceManager.AddProject(projectModel, cancellationToken));
     }
 
 
-    [HttpDelete("delete/{projectId})]
-    [ProducesResponseType(typeof(bool), 200)]
+    [HttpDelete("delete/{projectId}")]
+    [ProducesResponseType(typeof(ResponseObject<bool>), 200)]
     [ProducesResponseType(404)]
     [ProducesResponseType(500)]
     [EndpointDescription("Delete a specific project by its id")]
-    public async Task<IActionResult> AddProject(int projectId)
+    public async Task<IActionResult> AddProject(int projectId, CancellationToken cancellationToken)
     {
-        return await Run(() => _serviceManager.DeleteProject(projectModel));
+        return await Run(() => _serviceManager.DeleteProject(projectId, cancellationToken));
     }
 }

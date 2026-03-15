@@ -1,7 +1,7 @@
 <Solution>
   <Folder Name="/content/" />
   <Project Path="Core/Core.csproj" />
-  <Project Path="DB.ProjectsAndTasks/DB.ProjectsAndTasks.sqlproj">
+  <Project Path="DB.ProjectsAndTasks/DB.ProjectsAndTasks.sqlproj" Id="d12d83c3-b940-42d4-9d66-3611d453fd83">
     <Build />
     <Deploy />
   </Project>
