@@ -56,7 +56,7 @@ public class ProjectRepository(ApplicationDbContext context) : IProjectRepositor
             _ = await _context.Projects.Where(w => w.Id.Equals(projectId))
                 .ExecuteDeleteAsync(cancellationToken);
 
-            await transaction.CommitAsync(cancellationToken);   
+            await transaction.CommitAsync(cancellationToken);
         }
         catch
         {
@@ -68,18 +68,40 @@ public class ProjectRepository(ApplicationDbContext context) : IProjectRepositor
 
     public async Task<ProjectModel> Get(int projectId, CancellationToken cancellationToken)
     {
-        return await Task.FromResult(_context.Projects.First(f => f.Id.Equals(projectId)).ToModel());
+        if (cancellationToken.IsCancellationRequested)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+        }
+
+        ProjectsDTO projectDTO = await _context.Projects.FirstAsync(f => f.Id.Equals(projectId), cancellationToken);
+
+        if (projectDTO is null)
+        {
+            return ProjectsDTO.ToEmpty.ToModel();
+        }
+
+        return projectDTO.ToModel();
     }
 
     public async Task<ProjectModel[]> Get(CancellationToken cancellationToken)
     {
+        if (cancellationToken.IsCancellationRequested)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+        }
+
         return await Task.FromResult(_context.Projects.Select(p => p.ToModel()).ToArray());
     }
 
     public async Task<TaskModel[]> GetTasks(int projectId, CancellationToken cancellationToken)
     {
+        if (cancellationToken.IsCancellationRequested)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+        }
+
         return await Task.FromResult(_context.Tasks
-            .Where(w=> w.FkProjectId.Equals(projectId))
+            .Where(w => w.FkProjectId.Equals(projectId))
             .Select(p => p.ToModel())
         .ToArray());
     }

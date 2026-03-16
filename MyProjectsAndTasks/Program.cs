@@ -10,6 +10,8 @@ using Scalar.AspNetCore;
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
+IWebHostEnvironment webHostEnvironment = builder.Environment;
+
 builder.Services.AddControllers();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
@@ -21,6 +23,8 @@ builder.Services.AddScoped<IServiceManager, ServiceManager>();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer("Server=host.docker.internal;Database=ProjectsAndTasks;Persist Security Info=True;User ID=sa;Password=Pointblank0;Pooling=False;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=True;Application Name=\"SQL Server Test\";Command Timeout=0"));
 
+builder.Services.AddAuthentication("DevScheme")
+        .AddScheme<AuthenticationSchemeOptions, DevelopmentAuthenticationHandler>("DevScheme", null);
 
 // Configure API versioning services
 builder.Services.AddApiVersioning(options =>
@@ -35,9 +39,12 @@ builder.Services.AddApiVersioning(options =>
     options.SubstituteApiVersionInUrl = true;
 });
 
-builder.Services.AddAuthorizationBuilder()
-    .AddPolicy("ReadAccess", policy => policy.RequireRole("User", "Admin"))
-    .AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+if (webHostEnvironment.IsDevelopment())
+{
+    builder.Services.AddAuthorizationBuilder()
+        .AddPolicy("ReadAccess", policy => policy.RequireRole("User", "Admin"))
+        .AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
+}
 
 WebApplication app = builder.Build();
 
@@ -55,8 +62,6 @@ if (app.Environment.IsDevelopment())
 
     //test authentication while not being able to use identity provider. 
     //For production we would use JWT tokens or something similar.
-    builder.Services.AddAuthentication("DevScheme")
-        .AddScheme<AuthenticationSchemeOptions, DevelopmentAuthenticationHandler>("DevScheme", null);
 }
 
 if (app.Environment.IsProduction() && builder.Services.Any(s => s.ServiceType == typeof(DevelopmentAuthenticationHandler)))

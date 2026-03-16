@@ -1,6 +1,19 @@
-@MyProjectsAndTasks_HostAddress = http://localhost:5204
+@MyProjectsAndTasks_HostAddress = https://localhost:32777
+@ApiVersion = v1
 
-GET {{MyProjectsAndTasks_HostAddress}}/weatherforecast/
-Accept: application/json
+POST {{MyProjectsAndTasks_HostAddress}}/api/{{ApiVersion}}/Projects/
+Content-Type: application/json
 
+{
+  "id": 0,
+  "name": "Test Proj",
+  "description": "test a new project",
+  "createdDate": null
+}
+###
+
+GET {{MyProjectsAndTasks_HostAddress}}/api/{{ApiVersion}}/Projects/
+###
+
+DELETE {{MyProjectsAndTasks_HostAddress}}/api/{{ApiVersion}}/Projects/3
 ###

@@ -38,5 +38,4 @@ public class BaseController : Controller
 
         return Ok(response.Data);
     }
-
 }

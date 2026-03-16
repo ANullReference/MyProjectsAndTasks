@@ -19,7 +19,7 @@ public class ProjectsController(IServiceManager _serviceManager) : BaseControlle
     [EndpointDescription("Get all projects")]
     [EndpointSummary("Get all projects")]
 
-    public async Task<IActionResult> GetProjects(CancellationToken cancellationToken) => 
+    public async Task<IActionResult> GetProjects(CancellationToken cancellationToken) =>
         await Run(() => _serviceManager.GetProjects(cancellationToken));
 
     [HttpGet("{projectId}")]
@@ -28,7 +28,7 @@ public class ProjectsController(IServiceManager _serviceManager) : BaseControlle
     [ProducesResponseType(404)]
     [ProducesResponseType(500)]
     [EndpointDescription("Get a specific project by its id")]
-    public async Task<IActionResult> GetProjectById(int projectId, CancellationToken cancellationToken) => 
+    public async Task<IActionResult> GetProjectById(int projectId, CancellationToken cancellationToken) =>
         await Run(() => _serviceManager.GetProjectById(projectId, cancellationToken));
 
     [HttpPost()]
@@ -37,7 +37,7 @@ public class ProjectsController(IServiceManager _serviceManager) : BaseControlle
     [ProducesResponseType(404)]
     [ProducesResponseType(500)]
     [EndpointDescription("Get a specific project by its id")]
-    public async Task<IActionResult> CreateProject(ProjectModel projectModel, CancellationToken cancellationToken) => 
+    public async Task<IActionResult> CreateProject(ProjectModel projectModel, CancellationToken cancellationToken) =>
         await Run(() => _serviceManager.CreateProjects(projectModel, cancellationToken));
 
     [HttpDelete("{projectId}")]
@@ -46,6 +46,6 @@ public class ProjectsController(IServiceManager _serviceManager) : BaseControlle
     [ProducesResponseType(404)]
     [ProducesResponseType(500)]
     [EndpointDescription("Delete a specific project by its id")]
-    public async Task<IActionResult> DeleteProject(int projectId, CancellationToken cancellationToken) => 
+    public async Task<IActionResult> DeleteProject(int projectId, CancellationToken cancellationToken) =>
         await Run(() => _serviceManager.DeleteProject(projectId, cancellationToken));
 }

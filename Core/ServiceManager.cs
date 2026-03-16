@@ -3,7 +3,7 @@ using Core.Domain;
 
 namespace Core;
 
-public class ServiceManager (IProjectRepository projectRepository, ITaskRepository taskRepository) : IServiceManager
+public class ServiceManager(IProjectRepository projectRepository, ITaskRepository taskRepository) : IServiceManager
 {
     private readonly IProjectRepository _projectRepository = projectRepository;
     private readonly ITaskRepository _taskRepository = taskRepository;
@@ -11,7 +11,7 @@ public class ServiceManager (IProjectRepository projectRepository, ITaskReposito
     {
         if (id <= 0)
         {
-            return new (
+            return new(
                 data: null,
                 message: "Invalid project ID.",
                 responseType: ResponseType.ValidationError
@@ -25,7 +25,7 @@ public class ServiceManager (IProjectRepository projectRepository, ITaskReposito
     public async Task<ResponseObject<ProjectModel[]>> GetProjects(CancellationToken cancellationToken)
     {
         ProjectModel[] projects = await _projectRepository.Get(cancellationToken);
-        
+
         if (projects == null || projects.Length == 0)
         {
             return new ResponseObject<ProjectModel[]>
@@ -34,7 +34,7 @@ public class ServiceManager (IProjectRepository projectRepository, ITaskReposito
                 Message = "No projects found."
             };
         }
-        
+
         return new ResponseObject<ProjectModel[]>(projects);
     }
 
@@ -46,11 +46,11 @@ public class ServiceManager (IProjectRepository projectRepository, ITaskReposito
             return new ResponseObject<ProjectModel>
             (
                 data: null,
-                message : "Invalid project data.",
-                responseType:  ResponseType.ValidationError
+                message: "Invalid project data.",
+                responseType: ResponseType.ValidationError
             );
         }
-    
+
         try
         {
             ProjectModel addedProject = await _projectRepository.Create(projectModel, cancellationToken);
@@ -59,7 +59,7 @@ public class ServiceManager (IProjectRepository projectRepository, ITaskReposito
         catch (Exception ex)
         {
             return new ResponseObject<ProjectModel>(
-            
+
                 data: null,
                 message: $"An error occurred while adding the project: {ex.Message}",
                 responseType: ResponseType.Error
@@ -71,9 +71,20 @@ public class ServiceManager (IProjectRepository projectRepository, ITaskReposito
     {
         if (projectId <= 0)
         {
-            return new ResponseObject<bool> (
+            return new ResponseObject<bool>(
                 data: false,
                 message: "Invalid project ID.",
+                responseType: ResponseType.ValidationError
+            );
+        }
+
+        ProjectModel projectModel = await _projectRepository.Get(projectId, cancellationToken);
+
+        if (projectModel is null)
+        {
+            return new ResponseObject<bool>(
+                data: false,
+                message: $"Project with ID {projectId} not found.",
                 responseType: ResponseType.ValidationError
             );
         }

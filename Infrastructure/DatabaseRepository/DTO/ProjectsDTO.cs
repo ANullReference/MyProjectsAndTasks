@@ -1,5 +1,4 @@
-﻿using Azure.Core;
-using Core.Domain;
+﻿using Core.Domain;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -23,10 +22,10 @@ public class ProjectsDTO
     [Column("created_date")]
     public DateTime? CreatedDate { get; set; } = DateTime.Now;
 
-    public ICollection<TasksDTO>? Tasks { get; set; }   
+    public ICollection<TasksDTO>? Tasks { get; set; }
 
     public ProjectModel ToModel()
-    { 
+    {
         return new ProjectModel
         {
             Id = this.Id,
@@ -36,6 +35,7 @@ public class ProjectsDTO
         };
     }
 
+    public static ProjectsDTO ToEmpty => new ProjectsDTO { Id = 0 };
     public static ProjectsDTO FromModel(ProjectModel projectModel)
     {
         ArgumentNullException.ThrowIfNull(projectModel, nameof(projectModel));
