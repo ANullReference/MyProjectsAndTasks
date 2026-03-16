@@ -10,7 +10,7 @@ public class ProjectRepository(ApplicationDbContext context) : IProjectRepositor
 {
     private readonly ApplicationDbContext _context = context;
 
-    public async Task<ProjectModel> Add(ProjectModel projectModel, CancellationToken cancellationToken)
+    public async Task<ProjectModel> Create(ProjectModel projectModel, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(projectModel, nameof(projectModel));
 
@@ -20,8 +20,9 @@ public class ProjectRepository(ApplicationDbContext context) : IProjectRepositor
 
         try
         {
+            projectDTO.Id = null;
             _context.Projects.Add(projectDTO);
-            projectId = await _context.SaveChangesAsync();
+            projectId = await _context.SaveChangesAsync(cancellationToken);
         }
         catch (Exception exception)
         {

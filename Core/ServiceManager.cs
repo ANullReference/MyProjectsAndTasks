@@ -39,7 +39,7 @@ public class ServiceManager (IProjectRepository projectRepository, ITaskReposito
     }
 
 
-    public async Task<ResponseObject<ProjectModel>> AddProject(ProjectModel projectModel, CancellationToken cancellationToken)
+    public async Task<ResponseObject<ProjectModel>> CreateProjects(ProjectModel projectModel, CancellationToken cancellationToken)
     {
         if (projectModel == null || string.IsNullOrWhiteSpace(projectModel.Name))
         {
@@ -53,7 +53,7 @@ public class ServiceManager (IProjectRepository projectRepository, ITaskReposito
     
         try
         {
-            ProjectModel addedProject = await _projectRepository.Add(projectModel, cancellationToken);
+            ProjectModel addedProject = await _projectRepository.Create(projectModel, cancellationToken);
             return new ResponseObject<ProjectModel>(addedProject);
         }
         catch (Exception ex)
@@ -82,4 +82,47 @@ public class ServiceManager (IProjectRepository projectRepository, ITaskReposito
 
         return new ResponseObject<bool>(result);
     }
+
+
+
+    #region task
+
+    public async Task<ResponseObject<TaskModel>> CreateTask(TaskModel taskModel, CancellationToken cancellationToken)
+    {
+        if (taskModel == null || string.IsNullOrWhiteSpace(taskModel.Title))
+        {
+            return new ResponseObject<TaskModel>
+            (
+                data: null,
+                message: "Invalid task data.",
+                responseType: ResponseType.ValidationError
+            );
+        }
+
+        try
+        {
+            if (await _taskRepository.DidIReachMaxTasksForAProjectId(taskModel.FkProjectId, cancellationToken))
+            {
+                return new ResponseObject<TaskModel>(
+                    data: null,
+                    message: $"Limit reached for tasks for project id {taskModel.FkProjectId}",
+                    responseType: ResponseType.ValidationError
+                );
+            }
+
+            TaskModel addedTask = await _taskRepository.Create(taskModel, cancellationToken);
+            return new ResponseObject<TaskModel>(addedTask);
+        }
+        catch (Exception ex)
+        {
+            return new ResponseObject<TaskModel>(
+
+                data: null,
+                message: $"An error occurred while adding the task: {ex.Message}",
+                responseType: ResponseType.Error
+            );
+        }
+    }
+
+    #endregion
 }

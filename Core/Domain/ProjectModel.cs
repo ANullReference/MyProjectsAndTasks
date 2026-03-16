@@ -4,9 +4,8 @@ namespace Core.Domain;
 
 public class ProjectModel
 {
-    [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int Id { get; set; }
+    public int? Id { get; set; }
     public string? Name { get; set; }
     public string? Description { get; set; }
-    public DateTime CreatedDate { get; set; }
+    public DateTime? CreatedDate { get; set; }
 }

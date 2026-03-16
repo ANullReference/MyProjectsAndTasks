@@ -12,7 +12,7 @@ namespace MyProjectsAndTasks.Controllers;
 public class ProjectsController(IServiceManager _serviceManager) : BaseController
 {
     [HttpGet]
-    [ProducesResponseType(typeof(ProjectModel[]), 200)] 
+    [ProducesResponseType(typeof(ResponseObject<ProjectModel[]>), 200)] 
     [ProducesResponseType(404)]
     [ProducesResponseType(500)]
     [EndpointDescription("Get all projects")]
@@ -33,14 +33,14 @@ public class ProjectsController(IServiceManager _serviceManager) : BaseControlle
         return await Run(() => _serviceManager.GetProjectById(projectId, cancellationToken));
     }
 
-    [HttpPut("add")]
+    [HttpPost("create")]
     [ProducesResponseType(typeof(ResponseObject<ProjectModel>), 200)]
     [ProducesResponseType(404)]
     [ProducesResponseType(500)]
     [EndpointDescription("Get a specific project by its id")]
-    public async Task<IActionResult> AddProject(ProjectModel projectModel, CancellationToken cancellationToken)
+    public async Task<IActionResult> CreateProject(ProjectModel projectModel, CancellationToken cancellationToken)
     {
-        return await Run(() => _serviceManager.AddProject(projectModel, cancellationToken));
+        return await Run(() => _serviceManager.CreateProjects(projectModel, cancellationToken));
     }
 
 

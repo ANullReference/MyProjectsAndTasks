@@ -10,7 +10,7 @@ public class ProjectsDTO
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [Column("id")]
-    public int Id { get; set; }
+    public int? Id { get; set; }
 
     [MaxLength(64)]
     [Column("name")]
@@ -21,7 +21,9 @@ public class ProjectsDTO
     public string? Description { get; set; }
 
     [Column("created_date")]
-    public DateTime CreatedDate { get; set; } = DateTime.Now;
+    public DateTime? CreatedDate { get; set; } = DateTime.Now;
+
+    public ICollection<TasksDTO>? Tasks { get; set; }   
 
     public ProjectModel ToModel()
     { 
@@ -30,7 +32,7 @@ public class ProjectsDTO
             Id = this.Id,
             Name = this.Name,
             Description = this.Description,
-            CreatedDate = this.CreatedDate
+            CreatedDate = this.CreatedDate ?? DateTime.Now
         };
     }
 
@@ -42,7 +44,7 @@ public class ProjectsDTO
             Id = projectModel.Id,
             Name = projectModel.Name,
             Description = projectModel.Description,
-            CreatedDate = projectModel.CreatedDate
+            CreatedDate = projectModel.CreatedDate ?? DateTime.Now
         };
     }
 }

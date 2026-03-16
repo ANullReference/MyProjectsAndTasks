@@ -2,6 +2,10 @@
 using Core.Domain;
 using Infrastructure.DatabaseRepository.DTO;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Storage;
+using System.Data;
+using System.Diagnostics.CodeAnalysis;
+using System.Transactions;
 
 namespace Infrastructure.DatabaseRepository;
 
@@ -9,23 +13,28 @@ public class TaskRepository(ApplicationDbContext context) : ITaskRepository
 {
     private readonly ApplicationDbContext _context = context;
 
-    public async Task<TaskModel> Add(TaskModel taskModel, CancellationToken cancellationToken)
+    public async Task<TaskModel> Create(TaskModel taskModel, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(taskModel, nameof(taskModel));
 
         int taskId;
 
         TasksDTO taskDTO = TasksDTO.FromModel(taskModel);
+        using IDbContextTransaction transaction = _context.Database.BeginTransaction();
 
         try
         {
+            
+            //verify if i am at the 10 task limit before adding. 
             _context.Tasks.Add(taskDTO);
             taskId = await _context.SaveChangesAsync(cancellationToken);
+            transaction.Commit();
         }
         catch (Exception exception)
         {
+            transaction.Rollback(); 
             Console.WriteLine($"Error saving task: {exception.Message}");
-            throw new Exception("Failed save task in database");
+            throw;
         }
 
         return _context.Tasks.Find(taskId)?.ToModel() ?? throw new Exception("Failed to retrieve the added task.");
@@ -82,5 +91,18 @@ public class TaskRepository(ApplicationDbContext context) : ITaskRepository
             .ExecuteDeleteAsync(cancellationToken);
 
         return true;
+    }
+
+    public async Task<bool> DidIReachMaxTasksForAProjectId(int projectId, CancellationToken cancellationToken)
+    {
+        ProjectsDTO? project = await _context.Projects.FirstOrDefaultAsync(f => f.Id.Equals(projectId)
+            , cancellationToken: cancellationToken);
+
+        if (project is not null && project.Tasks?.Count >= 10)//move this 10 to app settings
+        {
+            return true;
+        }
+
+        return false;
     }
 }
