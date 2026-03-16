@@ -1,9 +1,10 @@
 using Asp.Versioning;
 using Core;
 using Core.Abstractions;
-using Infrastructure;
 using Infrastructure.DatabaseRepository;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.EntityFrameworkCore;
+using MyProjectsAndTasks.DevEnvHelpers;
 using Scalar.AspNetCore;
 
 WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
@@ -34,6 +35,9 @@ builder.Services.AddApiVersioning(options =>
     options.SubstituteApiVersionInUrl = true;
 });
 
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy("ReadAccess", policy => policy.RequireRole("User", "Admin"))
+    .AddPolicy("AdminOnly", policy => policy.RequireRole("Admin"));
 
 WebApplication app = builder.Build();
 
@@ -48,12 +52,20 @@ if (app.Environment.IsDevelopment())
         options.WithTitle("Projects and Tasks")
                .WithTheme(ScalarTheme.DeepSpace); // Optional theme
     });
+
+    //test authentication while not being able to use identity provider. 
+    //For production we would use JWT tokens or something similar.
+    builder.Services.AddAuthentication("DevScheme")
+        .AddScheme<AuthenticationSchemeOptions, DevelopmentAuthenticationHandler>("DevScheme", null);
 }
 
-
+if (app.Environment.IsProduction() && builder.Services.Any(s => s.ServiceType == typeof(DevelopmentAuthenticationHandler)))
+{
+    throw new InvalidOperationException("SECURITY ALERT: DevAuthHandler detected in Production configuration!");
+}
 
 app.UseHttpsRedirection();
-
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();

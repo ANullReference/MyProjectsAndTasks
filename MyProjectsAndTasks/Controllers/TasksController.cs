@@ -6,11 +6,11 @@ using Microsoft.AspNetCore.Mvc;
 namespace MyProjectsAndTasks.Controllers;
 
 [ApiController]
-[Route("api/v{version:apiVersion}/Projects/{projectId}/[controller]")]
+[Route("api/v{version:apiVersion}/projects/{projectId}/[controller]")]
 [ApiVersion("1.0")]
 public class TasksController(IServiceManager _serviceManager) : BaseController
 {
-    [HttpPost("create")]
+    [HttpPost()]
     [ProducesResponseType(typeof(ResponseObject<TaskModel>), 200)]
     [ProducesResponseType(404)]
     [ProducesResponseType(500)]

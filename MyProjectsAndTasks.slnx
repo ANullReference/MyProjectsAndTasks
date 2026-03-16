@@ -7,4 +7,5 @@
   </Project>
   <Project Path="Infrastructure/Infrastructure.csproj" />
   <Project Path="MyProjectsAndTasks/MyProjectsAndTasks.csproj" />
+  <Project Path="Tests/Tests.csproj" Id="2b2a61e6-872f-494d-8b1d-b7d9dffd274d" />
 </Solution>
