@@ -6,9 +6,8 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Infrastructure.DatabaseRepository;
 
-public class ProjectRepository(ApplicationDbContext context) : IProjectRepository
+public class ProjectRepository(ApplicationDbContext _context) : IProjectRepository
 {
-    private readonly ApplicationDbContext _context = context;
 
     public async Task<ProjectModel> Create(ProjectModel projectModel, CancellationToken cancellationToken)
     {
