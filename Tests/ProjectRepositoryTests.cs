@@ -41,8 +41,5 @@ public class ProjectRepositoryTests : IAsyncDisposable
         Assert.Empty(await _context.Tasks.Where(t => t.FkProjectId == 1).ToListAsync(CancellationToken.None));
     }
 
-    public async ValueTask DisposeAsync()
-    {
-        await _context.DisposeAsync();
-    }
+    public async ValueTask DisposeAsync() => await _context.DisposeAsync();
 }
