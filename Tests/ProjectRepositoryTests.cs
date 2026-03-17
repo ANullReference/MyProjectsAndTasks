@@ -1,33 +1,23 @@
 ﻿using Infrastructure.DatabaseRepository;
 using Infrastructure.DatabaseRepository.DTO;
-using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Tests.Helpers;
 
 namespace Tests;
 
 /// <summary>
 /// 
 /// </summary>
-public class ProjectRepositoryTests : IDisposable
+public class ProjectRepositoryTests : IAsyncDisposable
 {
-    private readonly SqliteConnection _connection;
+
     private readonly ApplicationDbContext _context;
     private readonly ProjectRepository _sut; // System Under Test
 
     public ProjectRepositoryTests()
     {
-        // 1. Create and open the connection
-        _connection = new SqliteConnection("Filename=:memory:");
-        _connection.Open();
-
-        // 2. Build options and ensure the schema is created
-        var options = new DbContextOptionsBuilder<ApplicationDbContext>()
-            .UseSqlite(_connection)
-            .Options;
-
-        _context = new ApplicationDbContext(options);
-        _context.Database.EnsureCreated(); // This creates your tables/keys
-
+        _context = new Database().Generate();
+        _context.Database.EnsureCreated();
         _sut = new ProjectRepository(_context);
     }
 
@@ -51,10 +41,8 @@ public class ProjectRepositoryTests : IDisposable
         Assert.Empty(await _context.Tasks.Where(t => t.FkProjectId == 1).ToListAsync(CancellationToken.None));
     }
 
-    public void Dispose()
+    public async ValueTask DisposeAsync()
     {
-        // SQLite In-Memory is deleted when the connection closes
-        _connection.Close();
-        _context.Dispose();
+        await _context.DisposeAsync();
     }
 }
