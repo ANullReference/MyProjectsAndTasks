@@ -8,6 +8,11 @@ public class Database : IAsyncDisposable
 {
     private SqliteConnection _connection;
 
+    public Database()
+    {
+        _connection = new SqliteConnection();
+    }
+
     public ApplicationDbContext Generate()
     {
         // 1. Create and open the connection

@@ -21,7 +21,7 @@ public class ProjectRepositoryTests : IAsyncDisposable
         _sut = new ProjectRepository(_context);
     }
 
-    [Fact]
+    [Test]
     public async Task Delete_WithValidId_ShouldRemoveProjectAndTasks()
     {
         // Arrange
@@ -36,9 +36,9 @@ public class ProjectRepositoryTests : IAsyncDisposable
         bool result = await _sut.Delete(1, CancellationToken.None);
 
         // Assert
-        Assert.True(result);
-        Assert.False(await _context.Projects.AnyAsync(a => a.Id.Equals(1), CancellationToken.None));
-        Assert.Empty(await _context.Tasks.Where(t => t.FkProjectId == 1).ToListAsync(CancellationToken.None));
+        await Assert.That(result).IsTrue();
+        await Assert.That(await _context.Projects.AnyAsync(a => a.Id.Equals(1), CancellationToken.None)).IsFalse();
+        await Assert.That(await _context.Tasks.Where(t => t.FkProjectId == 1).ToListAsync(CancellationToken.None)).IsEmpty();
     }
 
     public async ValueTask DisposeAsync() => await _context.DisposeAsync();

@@ -1,7 +1,7 @@
 ﻿using Core;
 using Core.Abstractions;
 using Core.Domain;
-using Moq;
+//using Moq;
 
 namespace Tests;
 
@@ -15,8 +15,8 @@ public class ServiceManagerTests
 
     public ServiceManagerTests()
     {
-        _projectRepository = new Mock<IProjectRepository>();
-        _taskRepository = new Mock<ITaskRepository>();
+        _projectRepository = Mock.Of<IProjectRepository>();
+        _taskRepository = Mock.Of<ITaskRepository>();
 
         _systemUnderTest_ServiceManager = new ServiceManager(_projectRepository.Object, _taskRepository.Object);
     }
@@ -39,16 +39,16 @@ public class ServiceManagerTests
         }
     }
 
-    [Theory]
-    [InlineData(10)]
-    [InlineData(20)]
+    [Test]
+    [Arguments(10)]
+    [Arguments(20)]
     public async Task Verify_TenMaxTasks_ForProjectId_ShouldReturnInvalid(int projectId)
     {
-        //setup the mock to return a project and indicate that the max tasks for the project has been reached
-        _projectRepository.Setup(repo => repo.Get(projectId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new ProjectModel { Id = projectId });
-        _taskRepository.Setup(repo => repo.DidIReachMaxTasksForAProjectId(projectId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(true);
+        _projectRepository.Get(projectId, Any())
+            .Returns(new ProjectModel { Id = projectId });
+
+        _taskRepository.DidIReachMaxTasksForAProjectId(projectId, Any())
+            .Returns(true);
 
         TaskModel taskModel = new()
         {
@@ -57,13 +57,13 @@ public class ServiceManagerTests
         };
 
         ResponseObject<TaskModel> taskModelResponse = await _systemUnderTest_ServiceManager.CreateTask(taskModel, CancellationToken.None);
-        Assert.True(Assert.IsType<ResponseObject<TaskModel>>(taskModelResponse).IsInvalid);
+        await Assert.That(taskModelResponse.IsInvalid).IsTrue();
     }
 
-    [Theory]
-    [InlineData("", 10)]
-    [InlineData(null, 10)]
-    public async Task Verify_NullOrEmptyTitle_ShouldReturnInvalid(string title, int projectId)
+    [Test]
+    [Arguments("", 10)]
+    [Arguments(null, 15)]
+    public async Task Verify_NullOrEmptyTitle_ShouldReturnInvalid(string? title, int projectId)
     {
         TaskModel taskModel = new()
         {
@@ -72,21 +72,23 @@ public class ServiceManagerTests
         };
 
         //setup the mock to return a project and indicate that the max tasks for the project has been reached
-        _projectRepository.Setup(repo => repo.Get(projectId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new ProjectModel { Id = projectId });
-        _taskRepository.Setup(repo => repo.DidIReachMaxTasksForAProjectId(projectId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(false);
-        _taskRepository.Setup(repo => repo.Create(It.IsAny<TaskModel>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(taskModel);
+        _projectRepository.Get(projectId, Any())
+            .Returns(new ProjectModel { Id = projectId });
+
+        _taskRepository.DidIReachMaxTasksForAProjectId(projectId, Any())
+            .Returns(false);
+
+        _taskRepository.Create(Any(), Any())
+            .Returns(taskModel);
 
         ResponseObject<TaskModel> taskModelResponse = await _systemUnderTest_ServiceManager.CreateTask(taskModel, CancellationToken.None);
 
-        Assert.True(Assert.IsType<ResponseObject<TaskModel>>(taskModelResponse).IsInvalid);
+        await Assert.That(taskModelResponse.IsInvalid).IsTrue();
     }
 
-    [Theory]
-    [InlineData(10)]
-    [InlineData(20)]
+    [Test]
+    [Arguments(10)]
+    [Arguments(20)]
     public async Task Verify_LessThanTenTasks_ForProjectId_ShouldReturnSucccess(int projectId)
     {
         TaskModel taskModel = new()
@@ -96,15 +98,17 @@ public class ServiceManagerTests
         };
 
         //setup the mock to return a project and indicate that the max tasks for the project has been reached
-        _projectRepository.Setup(repo => repo.Get(projectId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(new ProjectModel { Id = projectId });
-        _taskRepository.Setup(repo => repo.DidIReachMaxTasksForAProjectId(projectId, It.IsAny<CancellationToken>()))
-            .ReturnsAsync(false);
-        _taskRepository.Setup(repo => repo.Create(It.IsAny<TaskModel>(), It.IsAny<CancellationToken>()))
-            .ReturnsAsync(taskModel);
+        _projectRepository.Get(projectId, Any())
+            .Returns(new ProjectModel { Id = projectId });
+
+        _taskRepository.DidIReachMaxTasksForAProjectId(projectId, Any())
+            .Returns(false);
+
+        _taskRepository.Create(Any(), Any())
+            .Returns(taskModel);
 
         ResponseObject<TaskModel> taskModelResponse = await _systemUnderTest_ServiceManager.CreateTask(taskModel, CancellationToken.None);
 
-        Assert.True(Assert.IsType<ResponseObject<TaskModel>>(taskModelResponse).IsSuccess);
+        await Assert.That(taskModelResponse.IsSuccess).IsTrue();
     }
 }
