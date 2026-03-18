@@ -60,7 +60,7 @@ if (app.Environment.IsDevelopment())
                .WithTheme(ScalarTheme.DeepSpace); // Optional theme
     });
 
-    //test authentication while not being able to use identity provider. 
+    //test authentication while not being able to use identity provider.
     //For production we would use JWT tokens or something similar.
 }
 

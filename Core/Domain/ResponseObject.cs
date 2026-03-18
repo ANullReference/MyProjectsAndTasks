@@ -1,5 +1,4 @@
-﻿
-namespace Core.Domain;
+﻿namespace Core.Domain;
 
 public class ResponseObject<T>
 {

@@ -18,7 +18,6 @@ public class ProjectsController(IServiceManager _serviceManager) : BaseControlle
     [ProducesResponseType(500)]
     [EndpointDescription("Get all projects")]
     [EndpointSummary("Get all projects")]
-
     public async Task<IActionResult> GetProjects(CancellationToken cancellationToken) =>
         await Run(() => _serviceManager.GetProjects(cancellationToken));
 

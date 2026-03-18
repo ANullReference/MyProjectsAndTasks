@@ -8,7 +8,6 @@ namespace Infrastructure.DatabaseRepository;
 
 public class ProjectRepository(ApplicationDbContext _context) : IProjectRepository
 {
-
     public async Task<ProjectModel> Create(ProjectModel projectModel, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(projectModel, nameof(projectModel));
@@ -38,7 +37,6 @@ public class ProjectRepository(ApplicationDbContext _context) : IProjectReposito
         {
             return false;
         }
-
 
         if (!_context.Projects.Any(a => a.Id.Equals(projectId)))
         {

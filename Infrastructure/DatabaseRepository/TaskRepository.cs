@@ -4,8 +4,6 @@ using Infrastructure.DatabaseRepository.DTO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
 using System.Data;
-using System.Diagnostics.CodeAnalysis;
-using System.Transactions;
 
 namespace Infrastructure.DatabaseRepository;
 
@@ -24,15 +22,14 @@ public class TaskRepository(ApplicationDbContext context) : ITaskRepository
 
         try
         {
-            
-            //verify if i am at the 10 task limit before adding. 
+            //verify if i am at the 10 task limit before adding.
             _context.Tasks.Add(taskDTO);
             taskId = await _context.SaveChangesAsync(cancellationToken);
             transaction.Commit();
         }
         catch (Exception exception)
         {
-            transaction.Rollback(); 
+            transaction.Rollback();
             Console.WriteLine($"Error saving task: {exception.Message}");
             throw;
         }
@@ -59,15 +56,15 @@ public class TaskRepository(ApplicationDbContext context) : ITaskRepository
         }
 
         int _ = await _context.Tasks.Where(w => w.Id.Equals(taskId)).ExecuteDeleteAsync(cancellationToken);
-        
+
         return true;
     }
 
     public async Task<TaskModel[]> GetByProjectId(int projectId, CancellationToken cancellationToken)
     {
         if (!_context.Tasks.Any(a => a.FkProjectId.Equals(projectId)))
-        { 
-            return []; 
+        {
+            return [];
         }
 
         TaskModel[] taskModels = await _context.Tasks
@@ -78,7 +75,6 @@ public class TaskRepository(ApplicationDbContext context) : ITaskRepository
         return taskModels;
     }
 
-
     public async Task<bool> DeleteByProjectId(int projectId, CancellationToken cancellationToken)
     {
         if (!_context.Projects.Any(a => a.Id.Equals(projectId)))
@@ -86,8 +82,8 @@ public class TaskRepository(ApplicationDbContext context) : ITaskRepository
             return false;
         }
 
-        int _  = await _context.Tasks
-            .Where(w => w.FkProjectId.Equals(projectId))            
+        int _ = await _context.Tasks
+            .Where(w => w.FkProjectId.Equals(projectId))
             .ExecuteDeleteAsync(cancellationToken);
 
         return true;

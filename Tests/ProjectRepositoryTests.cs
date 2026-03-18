@@ -6,11 +6,10 @@ using Tests.Helpers;
 namespace Tests;
 
 /// <summary>
-/// 
+///
 /// </summary>
 public class ProjectRepositoryTests : IAsyncDisposable
 {
-
     private readonly ApplicationDbContext _context;
     private readonly ProjectRepository _sut; // System Under Test
 

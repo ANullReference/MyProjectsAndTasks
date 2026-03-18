@@ -7,6 +7,7 @@ public class ServiceManager(IProjectRepository projectRepository, ITaskRepositor
 {
     private readonly IProjectRepository _projectRepository = projectRepository;
     private readonly ITaskRepository _taskRepository = taskRepository;
+
     public async Task<ResponseObject<ProjectModel>> GetProjectById(int id, CancellationToken cancellationToken)
     {
         if (id <= 0)
@@ -37,7 +38,6 @@ public class ServiceManager(IProjectRepository projectRepository, ITaskRepositor
 
         return new ResponseObject<ProjectModel[]>(projects);
     }
-
 
     public async Task<ResponseObject<ProjectModel>> CreateProjects(ProjectModel projectModel, CancellationToken cancellationToken)
     {
@@ -94,8 +94,6 @@ public class ServiceManager(IProjectRepository projectRepository, ITaskRepositor
         return new ResponseObject<bool>(result);
     }
 
-
-
     #region task
 
     public async Task<ResponseObject<TaskModel>> CreateTask(TaskModel taskModel, CancellationToken cancellationToken)
@@ -135,5 +133,5 @@ public class ServiceManager(IProjectRepository projectRepository, ITaskRepositor
         }
     }
 
-    #endregion
+    #endregion task
 }

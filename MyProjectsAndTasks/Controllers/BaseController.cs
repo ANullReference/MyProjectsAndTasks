@@ -6,8 +6,8 @@ namespace MyProjectsAndTasks.Controllers;
 public class BaseController : Controller
 {
     /// <summary>
-    /// Generic response handler for API endpoints. 
-    /// It executes the provided action, handles exceptions, 
+    /// Generic response handler for API endpoints.
+    /// It executes the provided action, handles exceptions,
     /// and returns appropriate HTTP responses based on the result.
     /// </summary>
     /// <typeparam name="T"></typeparam>
