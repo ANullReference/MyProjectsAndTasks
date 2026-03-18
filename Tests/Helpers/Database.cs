@@ -10,17 +10,22 @@ public class Database : IAsyncDisposable
 
     public Database()
     {
-        _connection = new SqliteConnection();
+        _connection = new("Filename=:memory:");
     }
 
     public ApplicationDbContext Generate()
     {
+        if (_connection is null)
+        {
+            InvalidProgramException ex = new("Connection is null. This should never happen.");
+            throw ex;
+        }
+
         // 1. Create and open the connection
-        _connection = new SqliteConnection("Filename=:memory:");
         _connection.Open();
 
         // 2. Build options and ensure the schema is created
-        var options = new DbContextOptionsBuilder<ApplicationDbContext>()
+        DbContextOptions<ApplicationDbContext> options = new DbContextOptionsBuilder<ApplicationDbContext>()
             .UseSqlite(_connection)
             .Options;
 
