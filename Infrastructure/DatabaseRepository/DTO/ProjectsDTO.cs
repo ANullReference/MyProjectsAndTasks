@@ -35,7 +35,7 @@ public class ProjectsDTO
         };
     }
 
-    public static ProjectsDTO ToEmpty => new ProjectsDTO { Id = 0 };
+    public static ProjectsDTO ToEmpty => new() { Id = 0 };
 
     public static ProjectsDTO FromModel(ProjectModel projectModel)
     {

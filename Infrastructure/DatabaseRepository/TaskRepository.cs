@@ -7,6 +7,14 @@ using System.Data;
 
 namespace Infrastructure.DatabaseRepository;
 
+/// <summary>
+/// Provides methods for creating, retrieving, and deleting task entities in the application data store.
+/// </summary>
+/// <remarks>This repository encapsulates data access logic for tasks, including operations scoped to specific
+/// projects. All methods are asynchronous and require a valid database context. Thread safety is determined by the
+/// underlying ApplicationDbContext implementation.</remarks>
+/// <param name="context">The database context used to access and manage task and project data.</param>
+/// <seealso cref="ApplicationDbContext"/>
 public class TaskRepository(ApplicationDbContext context) : ITaskRepository
 {
     private readonly ApplicationDbContext _context = context;

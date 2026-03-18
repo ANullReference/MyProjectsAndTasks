@@ -6,6 +6,15 @@ using Microsoft.EntityFrameworkCore.Storage;
 
 namespace Infrastructure.DatabaseRepository;
 
+/// <summary>
+/// Provides methods for managing project data, including creation, retrieval, and deletion of projects and their
+/// associated tasks.
+/// </summary>
+/// <remarks>This repository encapsulates data access logic for projects and their related tasks. It is intended
+/// to be used as a data access layer within the application, abstracting the underlying database operations. All
+/// methods are asynchronous and support cancellation via a CancellationToken.</remarks>
+/// <param name="_context">The database context used to access and manage project and task data.</param>
+/// <seealso cref="ApplicationDbContext"/>
 public class ProjectRepository(ApplicationDbContext _context) : IProjectRepository
 {
     public async Task<ProjectModel> Create(ProjectModel projectModel, CancellationToken cancellationToken)

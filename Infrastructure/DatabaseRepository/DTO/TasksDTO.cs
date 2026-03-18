@@ -46,7 +46,7 @@ public class TasksDTO
     public static TasksDTO FromModel(TaskModel taskModel)
     {
         ArgumentNullException.ThrowIfNull(taskModel, nameof(taskModel));
-        return new TasksDTO
+        return new()
         {
             Id = taskModel.Id,
             FkPriorityId = taskModel.FkPriorityId,
