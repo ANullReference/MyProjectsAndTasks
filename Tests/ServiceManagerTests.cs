@@ -1,10 +1,8 @@
 ﻿using Core;
 using Core.Abstractions;
 using Core.Domain;
-//using Moq;
 
 namespace Tests;
-
 
 public class ServiceManagerTests
 {
@@ -19,24 +17,6 @@ public class ServiceManagerTests
         _taskRepository = Mock.Of<ITaskRepository>();
 
         _systemUnderTest_ServiceManager = new ServiceManager(_projectRepository.Object, _taskRepository.Object);
-    }
-
-    private IEnumerable<TaskModel> CreateTaskModels(int size, int projectId)
-    {
-        if (size < 0)
-        {
-            throw new ArgumentException("Size must be non-negative", nameof(size));
-        }
-
-        for (int i = 0; i < size; i++)
-        {
-            yield return new TaskModel
-            {
-                Id = i + 1,
-                FkProjectId = projectId,
-                Title = $"Task {i + 1}"
-            };
-        }
     }
 
     [Test]
@@ -63,7 +43,7 @@ public class ServiceManagerTests
     [Test]
     [Arguments("", 10)]
     [Arguments(null, 15)]
-    public async Task Verify_NullOrEmptyTitle_ShouldReturnInvalid(string? title, int projectId)
+    public async Task Verify_NullOrEmptyTitle_ShouldReturnInvalid(string title, int projectId)
     {
         TaskModel taskModel = new()
         {
