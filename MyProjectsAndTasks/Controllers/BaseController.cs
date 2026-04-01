@@ -1,4 +1,4 @@
-﻿using Core.Domain;
+﻿using Domain;
 using Microsoft.AspNetCore.Mvc;
 
 namespace MyProjectsAndTasks.Controllers;

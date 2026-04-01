@@ -1,4 +1,4 @@
-﻿using Core.Domain;
+﻿using Domain;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
@@ -9,35 +9,29 @@ public class ProjectsDTO
     [Key]
     [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
     [Column("id")]
-    public int? Id { get; set; }
+    public int Id { get; set; }
 
     [MaxLength(64)]
     [Column("name")]
-    public string? Name { get; set; }
+    public string Name { get; set; }
 
     [MaxLength(256)]
     [Column("description")]
-    public string? Description { get; set; }
+    public string Description { get; set; }
 
     [Column("created_date")]
-    public DateTime? CreatedDate { get; set; } = DateTime.Now;
+    public DateTime CreatedDate { get; set; } = DateTime.Now;
 
     public ICollection<TasksDTO>? Tasks { get; set; }
 
-    public ProjectModel ToModel()
+    public Project ToModel()
     {
-        return new ProjectModel
-        {
-            Id = this.Id,
-            Name = this.Name,
-            Description = this.Description,
-            CreatedDate = this.CreatedDate ?? DateTime.Now
-        };
+        return new Project(Id, Name, Description, CreatedDate);
     }
 
     public static ProjectsDTO ToEmpty => new() { Id = 0 };
 
-    public static ProjectsDTO FromModel(ProjectModel projectModel)
+    public static ProjectsDTO FromModel(Project projectModel)
     {
         ArgumentNullException.ThrowIfNull(projectModel, nameof(projectModel));
         return new ProjectsDTO
@@ -45,7 +39,7 @@ public class ProjectsDTO
             Id = projectModel.Id,
             Name = projectModel.Name,
             Description = projectModel.Description,
-            CreatedDate = projectModel.CreatedDate ?? DateTime.Now
+            CreatedDate = projectModel.CreatedDate
         };
     }
 }

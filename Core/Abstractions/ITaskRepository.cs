@@ -1,14 +1,14 @@
-﻿using Core.Domain;
+﻿using Domain;
 
 namespace Core.Abstractions;
 
 public interface ITaskRepository
 {
-    Task<TaskModel> Create(TaskModel taskModel, CancellationToken cancellationToken);
+    Task<ProjectTask> Create(ProjectTask taskModel, CancellationToken cancellationToken);
 
-    Task<TaskModel> Get(int taskId, CancellationToken cancellationToken);
+    Task<ProjectTask> Get(int taskId, CancellationToken cancellationToken);
 
-    Task<TaskModel[]> GetByProjectId(int projectId, CancellationToken cancellationToken);
+    Task<ProjectTask[]> GetByProjectId(int projectId, CancellationToken cancellationToken);
 
     Task<bool> Delete(int taskId, CancellationToken cancellationToken);
 

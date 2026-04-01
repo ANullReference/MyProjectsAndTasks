@@ -1,5 +1,5 @@
 ﻿using Core.Abstractions;
-using Core.Domain;
+using Domain;
 
 namespace Core;
 
@@ -8,7 +8,7 @@ public class ServiceManager(IProjectRepository projectRepository, ITaskRepositor
     private readonly IProjectRepository _projectRepository = projectRepository;
     private readonly ITaskRepository _taskRepository = taskRepository;
 
-    public async Task<ResponseObject<ProjectModel>> GetProjectById(int id, CancellationToken cancellationToken)
+    public async Task<ResponseObject<Project>> GetProjectById(int id, CancellationToken cancellationToken)
     {
         if (id <= 0)
         {
@@ -19,31 +19,31 @@ public class ServiceManager(IProjectRepository projectRepository, ITaskRepositor
             );
         }
 
-        ProjectModel project = await _projectRepository.Get(id, cancellationToken);
-        return new ResponseObject<ProjectModel>(project);
+        Project project = await _projectRepository.Get(id, cancellationToken);
+        return new ResponseObject<Project>(project);
     }
 
-    public async Task<ResponseObject<ProjectModel[]>> GetProjects(CancellationToken cancellationToken)
+    public async Task<ResponseObject<Project[]>> GetProjects(CancellationToken cancellationToken)
     {
-        ProjectModel[] projects = await _projectRepository.Get(cancellationToken);
+        Project[] projects = await _projectRepository.Get(cancellationToken);
 
         if (projects == null || projects.Length == 0)
         {
-            return new ResponseObject<ProjectModel[]>
+            return new ResponseObject<Project[]>
             {
                 Data = null,
                 Message = "No projects found."
             };
         }
 
-        return new ResponseObject<ProjectModel[]>(projects);
+        return new ResponseObject<Project[]>(projects);
     }
 
-    public async Task<ResponseObject<ProjectModel>> CreateProjects(ProjectModel projectModel, CancellationToken cancellationToken)
+    public async Task<ResponseObject<Project>> CreateProjects(Project projectModel, CancellationToken cancellationToken)
     {
         if (projectModel == null || string.IsNullOrWhiteSpace(projectModel.Name))
         {
-            return new ResponseObject<ProjectModel>
+            return new ResponseObject<Project>
             (
                 data: null,
                 message: "Invalid project data.",
@@ -53,12 +53,12 @@ public class ServiceManager(IProjectRepository projectRepository, ITaskRepositor
 
         try
         {
-            ProjectModel addedProject = await _projectRepository.Create(projectModel, cancellationToken);
-            return new ResponseObject<ProjectModel>(addedProject);
+            Project addedProject = await _projectRepository.Create(projectModel, cancellationToken);
+            return new ResponseObject<Project>(addedProject);
         }
         catch (Exception ex)
         {
-            return new ResponseObject<ProjectModel>(
+            return new ResponseObject<Project>(
 
                 data: null,
                 message: $"An error occurred while adding the project: {ex.Message}",
@@ -78,7 +78,7 @@ public class ServiceManager(IProjectRepository projectRepository, ITaskRepositor
             );
         }
 
-        ProjectModel projectModel = await _projectRepository.Get(projectId, cancellationToken);
+        Project projectModel = await _projectRepository.Get(projectId, cancellationToken);
 
         if (projectModel is null)
         {
@@ -96,11 +96,11 @@ public class ServiceManager(IProjectRepository projectRepository, ITaskRepositor
 
     #region task
 
-    public async Task<ResponseObject<TaskModel>> CreateTask(TaskModel taskModel, CancellationToken cancellationToken)
+    public async Task<ResponseObject<ProjectTask>> CreateTask(ProjectTask taskModel, CancellationToken cancellationToken)
     {
         if (taskModel == null || string.IsNullOrWhiteSpace(taskModel.Title))
         {
-            return new ResponseObject<TaskModel>
+            return new ResponseObject<ProjectTask>
             (
                 data: null,
                 message: "Invalid task data.",
@@ -112,19 +112,19 @@ public class ServiceManager(IProjectRepository projectRepository, ITaskRepositor
         {
             if (await _taskRepository.DidIReachMaxTasksForAProjectId(taskModel.FkProjectId, cancellationToken))
             {
-                return new ResponseObject<TaskModel>(
+                return new ResponseObject<ProjectTask>(
                     data: null,
                     message: $"Limit reached for tasks for project id {taskModel.FkProjectId}",
                     responseType: ResponseType.ValidationError
                 );
             }
 
-            TaskModel addedTask = await _taskRepository.Create(taskModel, cancellationToken);
-            return new ResponseObject<TaskModel>(addedTask);
+            ProjectTask addedTask = await _taskRepository.Create(taskModel, cancellationToken);
+            return new ResponseObject<ProjectTask>(addedTask);
         }
         catch (Exception ex)
         {
-            return new ResponseObject<TaskModel>(
+            return new ResponseObject<ProjectTask>(
 
                 data: null,
                 message: $"An error occurred while adding the task: {ex.Message}",

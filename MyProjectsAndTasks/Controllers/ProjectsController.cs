@@ -1,6 +1,6 @@
 ﻿using Asp.Versioning;
 using Core.Abstractions;
-using Core.Domain;
+using Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,7 +13,7 @@ public class ProjectsController(IServiceManager _serviceManager) : BaseControlle
 {
     [HttpGet]
     [Authorize(Policy = "ReadAccess")]
-    [ProducesResponseType(typeof(ResponseObject<ProjectModel[]>), 200)]
+    [ProducesResponseType(typeof(ResponseObject<Project[]>), 200)]
     [ProducesResponseType(404)]
     [ProducesResponseType(500)]
     [EndpointDescription("Get all projects")]
@@ -23,7 +23,7 @@ public class ProjectsController(IServiceManager _serviceManager) : BaseControlle
 
     [HttpGet("{projectId}")]
     [Authorize(Policy = "ReadAccess")]
-    [ProducesResponseType(typeof(ResponseObject<ProjectModel[]>), 200)]
+    [ProducesResponseType(typeof(ResponseObject<Project[]>), 200)]
     [ProducesResponseType(404)]
     [ProducesResponseType(500)]
     [EndpointDescription("Get a specific project by its id")]
@@ -32,11 +32,11 @@ public class ProjectsController(IServiceManager _serviceManager) : BaseControlle
 
     [HttpPost()]
     [Authorize(Policy = "AdminOnly")]
-    [ProducesResponseType(typeof(ResponseObject<ProjectModel>), 200)]
+    [ProducesResponseType(typeof(ResponseObject<Project>), 200)]
     [ProducesResponseType(404)]
     [ProducesResponseType(500)]
     [EndpointDescription("Get a specific project by its id")]
-    public async Task<IActionResult> CreateProject(ProjectModel projectModel, CancellationToken cancellationToken) =>
+    public async Task<IActionResult> CreateProject(Project projectModel, CancellationToken cancellationToken) =>
         await Run(() => _serviceManager.CreateProjects(projectModel, cancellationToken));
 
     [HttpDelete("{projectId}")]

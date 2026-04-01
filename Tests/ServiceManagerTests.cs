@@ -1,6 +1,6 @@
 ﻿using Core;
 using Core.Abstractions;
-using Core.Domain;
+using Domain;
 
 namespace Tests;
 
@@ -22,38 +22,31 @@ public class ServiceManagerTests
     [Test]
     [Arguments(10)]
     [Arguments(20)]
-    public async Task Verify_TenMaxTasks_ForProjectId_ShouldReturnInvalid(int projectId)
+    public async System.Threading.Tasks.Task Verify_TenMaxTasks_ForProjectId_ShouldReturnInvalid(int projectId)
     {
         _projectRepository.Get(projectId, Any())
-            .Returns(new ProjectModel { Id = projectId });
+            .Returns(new Project(projectId, "name", "description", DateTime.Now));
 
         _taskRepository.DidIReachMaxTasksForAProjectId(projectId, Any())
             .Returns(true);
 
-        TaskModel taskModel = new()
-        {
-            FkProjectId = projectId,
-            Title = "New Task"
-        };
+        ProjectTask taskModel = new ProjectTask(0, "New Task", projectId, 0, 0, DateTime.Now);
 
-        ResponseObject<TaskModel> taskModelResponse = await _systemUnderTest_ServiceManager.CreateTask(taskModel, CancellationToken.None);
+        ResponseObject<ProjectTask> taskModelResponse = await _systemUnderTest_ServiceManager.CreateTask(taskModel, CancellationToken.None);
         await Assert.That(taskModelResponse.IsInvalid).IsTrue();
     }
 
     [Test]
     [Arguments("", 10)]
     [Arguments(null, 15)]
-    public async Task Verify_NullOrEmptyTitle_ShouldReturnInvalid(string title, int projectId)
+    public async System.Threading.Tasks.Task Verify_NullOrEmptyTitle_ShouldReturnInvalid(string title, int projectId)
     {
-        TaskModel taskModel = new()
-        {
-            FkProjectId = 10,
-            Title = title
-        };
+        ProjectTask taskModel = new ProjectTask(0, "New Task", 10, 0, 0, DateTime.Now);
 
         //setup the mock to return a project and indicate that the max tasks for the project has been reached
         _projectRepository.Get(projectId, Any())
-            .Returns(new ProjectModel { Id = projectId });
+            .Returns(new Project(projectId, "name", "description", DateTime.Now));
+
 
         _taskRepository.DidIReachMaxTasksForAProjectId(projectId, Any())
             .Returns(false);
@@ -61,7 +54,7 @@ public class ServiceManagerTests
         _taskRepository.Create(Any(), Any())
             .Returns(taskModel);
 
-        ResponseObject<TaskModel> taskModelResponse = await _systemUnderTest_ServiceManager.CreateTask(taskModel, CancellationToken.None);
+        ResponseObject<ProjectTask> taskModelResponse = await _systemUnderTest_ServiceManager.CreateTask(taskModel, CancellationToken.None);
 
         await Assert.That(taskModelResponse.IsInvalid).IsTrue();
     }
@@ -69,17 +62,13 @@ public class ServiceManagerTests
     [Test]
     [Arguments(10)]
     [Arguments(20)]
-    public async Task Verify_LessThanTenTasks_ForProjectId_ShouldReturnSucccess(int projectId)
+    public async System.Threading.Tasks.Task Verify_LessThanTenTasks_ForProjectId_ShouldReturnSucccess(int projectId)
     {
-        TaskModel taskModel = new()
-        {
-            FkProjectId = projectId,
-            Title = "New Task"
-        };
+        ProjectTask taskModel = new ProjectTask(0, "New Task", projectId, 0, 0, DateTime.Now);
 
         //setup the mock to return a project and indicate that the max tasks for the project has been reached
         _projectRepository.Get(projectId, Any())
-            .Returns(new ProjectModel { Id = projectId });
+            .Returns(new Project(projectId, "name", "description", DateTime.Now));
 
         _taskRepository.DidIReachMaxTasksForAProjectId(projectId, Any())
             .Returns(false);
@@ -87,7 +76,7 @@ public class ServiceManagerTests
         _taskRepository.Create(Any(), Any())
             .Returns(taskModel);
 
-        ResponseObject<TaskModel> taskModelResponse = await _systemUnderTest_ServiceManager.CreateTask(taskModel, CancellationToken.None);
+        ResponseObject<ProjectTask> taskModelResponse = await _systemUnderTest_ServiceManager.CreateTask(taskModel, CancellationToken.None);
 
         await Assert.That(taskModelResponse.IsSuccess).IsTrue();
     }

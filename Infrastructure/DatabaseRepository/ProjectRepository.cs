@@ -1,5 +1,5 @@
 ﻿using Core.Abstractions;
-using Core.Domain;
+using Domain;
 using Infrastructure.DatabaseRepository.DTO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -17,7 +17,7 @@ namespace Infrastructure.DatabaseRepository;
 /// <seealso cref="ApplicationDbContext"/>
 public class ProjectRepository(ApplicationDbContext _context) : IProjectRepository
 {
-    public async Task<ProjectModel> Create(ProjectModel projectModel, CancellationToken cancellationToken)
+    public async Task<Project> Create(Project projectModel, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(projectModel, nameof(projectModel));
 
@@ -27,7 +27,7 @@ public class ProjectRepository(ApplicationDbContext _context) : IProjectReposito
 
         try
         {
-            projectDTO.Id = null;
+            projectDTO.Id = 0;
             _context.Projects.Add(projectDTO);
             projectId = await _context.SaveChangesAsync(cancellationToken);
         }
@@ -72,7 +72,7 @@ public class ProjectRepository(ApplicationDbContext _context) : IProjectReposito
         return true;
     }
 
-    public async Task<ProjectModel> Get(int projectId, CancellationToken cancellationToken)
+    public async Task<Project> Get(int projectId, CancellationToken cancellationToken)
     {
         if (cancellationToken.IsCancellationRequested)
         {
@@ -89,17 +89,17 @@ public class ProjectRepository(ApplicationDbContext _context) : IProjectReposito
         return projectDTO.ToModel();
     }
 
-    public async Task<ProjectModel[]> Get(CancellationToken cancellationToken)
+    public async Task<Project[]> Get(CancellationToken cancellationToken)
     {
         if (cancellationToken.IsCancellationRequested)
         {
             cancellationToken.ThrowIfCancellationRequested();
         }
 
-        return await Task.FromResult(_context.Projects.Select(p => p.ToModel()).ToArray());
+        return await System.Threading.Tasks.Task.FromResult(_context.Projects.Select(p => p.ToModel()).ToArray());
     }
 
-    public async Task<TaskModel[]> GetTasks(int projectId, CancellationToken cancellationToken)
+    public async Task<ProjectTask[]> GetTasks(int projectId, CancellationToken cancellationToken)
     {
         if (cancellationToken.IsCancellationRequested)
         {

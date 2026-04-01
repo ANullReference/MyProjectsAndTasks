@@ -1,20 +1,20 @@
-﻿using Core.Domain;
+﻿using Domain;
 
 namespace Core.Abstractions;
 
 public interface IServiceManager
 {
-    Task<ResponseObject<ProjectModel[]>> GetProjects(CancellationToken cancellationToken);
+    Task<ResponseObject<Project[]>> GetProjects(CancellationToken cancellationToken);
 
-    Task<ResponseObject<ProjectModel>> GetProjectById(int id, CancellationToken cancellationToken);
+    Task<ResponseObject<Project>> GetProjectById(int id, CancellationToken cancellationToken);
 
     Task<ResponseObject<bool>> DeleteProject(int projectId, CancellationToken cancellationToken);
 
-    Task<ResponseObject<ProjectModel>> CreateProjects(ProjectModel projectModel, CancellationToken cancellationToken);
+    Task<ResponseObject<Project>> CreateProjects(Project projectModel, CancellationToken cancellationToken);
 
     #region tasks
 
-    Task<ResponseObject<TaskModel>> CreateTask(TaskModel taskModel, CancellationToken cancellationToken);
+    Task<ResponseObject<ProjectTask>> CreateTask(ProjectTask taskModel, CancellationToken cancellationToken);
 
     #endregion tasks
 }

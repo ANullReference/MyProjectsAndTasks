@@ -1,7 +1,8 @@
 ﻿using Asp.Versioning;
 using Core.Abstractions;
-using Core.Domain;
+using Domain;
 using Microsoft.AspNetCore.Mvc;
+using MyProjectsAndTasks.Models;
 
 namespace MyProjectsAndTasks.Controllers;
 
@@ -11,13 +12,14 @@ namespace MyProjectsAndTasks.Controllers;
 public class TasksController(IServiceManager _serviceManager) : BaseController
 {
     [HttpPost()]
-    [ProducesResponseType(typeof(ResponseObject<TaskModel>), 200)]
+    [ProducesResponseType(typeof(ResponseObject<ProjectTask>), 200)]
     [ProducesResponseType(404)]
     [ProducesResponseType(500)]
     [EndpointDescription("create task")]
     public async Task<IActionResult> CreateTask(int projectId, TaskModel taskModel, CancellationToken cancellationToken)
     {
-        taskModel.FkProjectId = projectId;
-        return await Run(() => _serviceManager.CreateTask(taskModel, cancellationToken));
+        ProjectTask task = new ProjectTask(0, taskModel.Title, projectId, taskModel.FkStatusId, taskModel.FkPriorityId, taskModel.CreatedDate);
+
+        return await Run(() => _serviceManager.CreateTask(task, cancellationToken));
     }
 }

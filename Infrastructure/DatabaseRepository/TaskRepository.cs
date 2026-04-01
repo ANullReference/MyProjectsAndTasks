@@ -1,5 +1,5 @@
 ﻿using Core.Abstractions;
-using Core.Domain;
+using Domain;
 using Infrastructure.DatabaseRepository.DTO;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Storage;
@@ -19,7 +19,7 @@ public class TaskRepository(ApplicationDbContext context) : ITaskRepository
 {
     private readonly ApplicationDbContext _context = context;
 
-    public async Task<TaskModel> Create(TaskModel taskModel, CancellationToken cancellationToken)
+    public async Task<ProjectTask> Create(ProjectTask taskModel, CancellationToken cancellationToken)
     {
         ArgumentNullException.ThrowIfNull(taskModel, nameof(taskModel));
 
@@ -45,7 +45,7 @@ public class TaskRepository(ApplicationDbContext context) : ITaskRepository
         return _context.Tasks.Find(taskId)?.ToModel() ?? throw new Exception("Failed to retrieve the added task.");
     }
 
-    public async Task<TaskModel> Get(int taskId, CancellationToken cancellationToken)
+    public async Task<ProjectTask> Get(int taskId, CancellationToken cancellationToken)
     {
         TasksDTO taskDto = await _context.Tasks.FirstAsync(f => f.Id.Equals(taskId), cancellationToken);
         return taskDto.ToModel();
@@ -68,14 +68,14 @@ public class TaskRepository(ApplicationDbContext context) : ITaskRepository
         return true;
     }
 
-    public async Task<TaskModel[]> GetByProjectId(int projectId, CancellationToken cancellationToken)
+    public async Task<ProjectTask[]> GetByProjectId(int projectId, CancellationToken cancellationToken)
     {
         if (!_context.Tasks.Any(a => a.FkProjectId.Equals(projectId)))
         {
             return [];
         }
 
-        TaskModel[] taskModels = await _context.Tasks
+        ProjectTask[] taskModels = await _context.Tasks
             .Where(w => w.FkProjectId.Equals(projectId))
             .Select(s => s.ToModel())
             .ToArrayAsync(cancellationToken);

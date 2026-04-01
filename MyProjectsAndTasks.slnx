@@ -5,6 +5,7 @@
     <Build />
     <Deploy />
   </Project>
+  <Project Path="Domain/Domain.csproj" Id="dc09a043-0711-4bf7-a5df-b0ee2da0a5bc" />
   <Project Path="Infrastructure/Infrastructure.csproj" />
   <Project Path="MyProjectsAndTasks/MyProjectsAndTasks.csproj" />
   <Project Path="Tests/Tests.csproj" Id="2b2a61e6-872f-494d-8b1d-b7d9dffd274d" />
